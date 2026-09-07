@@ -23,6 +23,12 @@ jobs:
         run: composer validate --strict
       - name: Install PHP dependencies
         run: composer install --no-interaction --prefer-dist --no-progress
+      - name: Export bootstrap Composer lock
+        uses: actions/upload-artifact@v4
+        with:
+          name: composer-lock
+          path: composer.lock
+          retention-days: 1
       - name: Check formatting
         run: ./vendor/bin/pint --test
       - name: Run tests
