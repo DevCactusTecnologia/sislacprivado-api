@@ -7,7 +7,7 @@ on:
     branches: [main]
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
   test:
@@ -15,27 +15,16 @@ jobs:
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v5
-        with:
-          ref: ${{ github.head_ref || github.ref_name }}
       - uses: shivammathur/setup-php@v2
         with:
           php-version: '8.4'
           coverage: none
-      - name: Validate Composer manifest
-        run: composer validate --strict
+      - name: Validate Composer manifest and lock
+        run: |
+          test -f composer.lock
+          composer validate --strict
       - name: Install PHP dependencies
         run: composer install --no-interaction --prefer-dist --no-progress
-      - name: Bootstrap Composer lock
-        if: github.event_name == 'pull_request'
-        run: |
-          if git ls-files --error-unmatch composer.lock >/dev/null 2>&1; then
-            exit 0
-          fi
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add composer.lock
-          git commit -m "build: lock Laravel dependencies"
-          git push origin HEAD:${{ github.head_ref }}
       - name: Check formatting
         run: ./vendor/bin/pint --test
       - name: Run tests
