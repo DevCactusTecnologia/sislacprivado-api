@@ -24,6 +24,22 @@ class ProductionDeploymentTest extends TestCase
         $this->assertStringNotContainsString('SUPABASE_SECRET_KEY', $script);
     }
 
+    public function test_production_smoke_checks_cover_liveness_and_supabase_auth(): void
+    {
+        $path = base_path('deploy/smoke.sh');
+
+        $this->assertFileExists($path);
+
+        $script = (string) file_get_contents($path);
+
+        $this->assertStringContainsString('/up', $script);
+        $this->assertStringContainsString('/api/health', $script);
+        $this->assertStringContainsString('/api/me', $script);
+        $this->assertStringContainsString('401', $script);
+        $this->assertStringContainsString('BEARER_TOKEN', $script);
+        $this->assertStringContainsString('Authorization: Bearer', $script);
+    }
+
     public function test_production_environment_example_is_minimal_and_safe(): void
     {
         $environment = (string) file_get_contents(base_path('.env.example'));
