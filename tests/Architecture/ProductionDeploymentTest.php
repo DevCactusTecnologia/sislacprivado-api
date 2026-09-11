@@ -43,6 +43,13 @@ class ProductionDeploymentTest extends TestCase
         $this->assertStringContainsString('Authorization: Bearer', $script);
     }
 
+    public function test_ci_validates_deployment_shell_syntax(): void
+    {
+        $workflow = (string) file_get_contents(base_path('.github/workflows/ci.yml'));
+
+        $this->assertStringContainsString('bash -n deploy/deploy.sh deploy/smoke.sh', $workflow);
+    }
+
     public function test_production_environment_example_is_minimal_and_safe(): void
     {
         $environment = (string) file_get_contents(base_path('.env.example'));
