@@ -24,10 +24,10 @@ function Assert-Status([string] $Path, [int] $Expected, [hashtable] $Headers = @
     $status = Get-Status "$BaseUrl$Path" $Headers
 
     if ($status -ne $Expected) {
-        throw "$Path: esperado HTTP $Expected, recebido $status."
+        throw "${Path}: esperado HTTP $Expected, recebido $status."
     }
 
-    Write-Host "$Path: HTTP $status"
+    Write-Host "${Path}: HTTP $status"
 }
 
 Assert-Status '/up' 200
