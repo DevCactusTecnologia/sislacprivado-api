@@ -18,6 +18,9 @@ class ProductionDeploymentTest extends TestCase
         $this->assertStringContainsString('--no-dev', $script);
         $this->assertStringContainsString('--optimize-autoloader', $script);
         $this->assertStringContainsString('php artisan optimize', $script);
+        $this->assertStringContainsString('APP_KEY', $script);
+        $this->assertStringContainsString('APP_URL', $script);
+        $this->assertStringContainsString('https://', $script);
         $this->assertStringNotContainsString('artisan migrate', $script);
         $this->assertStringNotContainsString('queue:', $script);
         $this->assertStringNotContainsString('DB_', $script);
@@ -45,10 +48,13 @@ class ProductionDeploymentTest extends TestCase
         $environment = (string) file_get_contents(base_path('.env.example'));
 
         $this->assertStringContainsString('APP_ENV=production', $environment);
+        $this->assertStringContainsString('APP_KEY=', $environment);
+        $this->assertStringContainsString('APP_URL=', $environment);
         $this->assertStringContainsString('APP_DEBUG=false', $environment);
         $this->assertStringContainsString('LOG_CHANNEL=stderr', $environment);
         $this->assertStringContainsString('SUPABASE_URL=', $environment);
         $this->assertStringContainsString('SUPABASE_PUBLISHABLE_KEY=', $environment);
+        $this->assertStringNotContainsString('APP_URL=http://localhost', $environment);
         $this->assertStringNotContainsString('SUPABASE_SECRET_KEY', $environment);
         $this->assertStringNotContainsString('DB_CONNECTION', $environment);
         $this->assertStringNotContainsString('QUEUE_CONNECTION', $environment);
