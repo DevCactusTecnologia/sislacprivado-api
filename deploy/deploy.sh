@@ -30,6 +30,17 @@ if (config("app.debug") !== false) {
     exit(1);
 }
 
+if ((string) config("app.key") === "") {
+    fwrite(STDERR, "APP_KEY é obrigatório.\n");
+    exit(1);
+}
+
+$appUrl = (string) config("app.url");
+if ($appUrl === "" || ! str_starts_with($appUrl, "https://")) {
+    fwrite(STDERR, "APP_URL deve usar https://.\n");
+    exit(1);
+}
+
 if ((string) config("services.supabase.url") === "" || (string) config("services.supabase.publishable_key") === "") {
     fwrite(STDERR, "SUPABASE_URL e SUPABASE_PUBLISHABLE_KEY são obrigatórios.\n");
     exit(1);
