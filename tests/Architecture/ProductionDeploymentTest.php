@@ -20,7 +20,9 @@ class ProductionDeploymentTest extends TestCase
         $this->assertStringContainsString('php artisan optimize', $script);
         $this->assertStringContainsString('APP_KEY', $script);
         $this->assertStringContainsString('APP_URL', $script);
-        $this->assertStringContainsString('https://', $script);
+        $this->assertStringContainsString('FILTER_VALIDATE_URL', $script);
+        $this->assertStringContainsString('SUPABASE_URL', $script);
+        $this->assertStringContainsString('sb_publishable_', $script);
         $this->assertStringNotContainsString('artisan migrate', $script);
         $this->assertStringNotContainsString('queue:', $script);
         $this->assertStringNotContainsString('DB_', $script);
