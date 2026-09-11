@@ -23,6 +23,8 @@ jobs:
         run: |
           test -f composer.lock
           composer validate --strict
+      - name: Validate deployment shell syntax
+        run: bash -n deploy/deploy.sh deploy/smoke.sh
       - name: Install PHP dependencies
         run: composer install --no-interaction --prefer-dist --no-progress
       - name: Check formatting
