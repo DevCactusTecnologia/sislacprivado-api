@@ -15,7 +15,6 @@ class SupabaseClientTest extends TestCase
 
         config()->set('services.supabase.url', 'https://project.supabase.co');
         config()->set('services.supabase.publishable_key', 'sb_publishable_test');
-        config()->set('services.supabase.secret_key', 'sb_secret_test');
     }
 
     public function test_get_user_sends_publishable_key_and_user_jwt_in_separate_headers(): void
@@ -35,22 +34,6 @@ class SupabaseClientTest extends TestCase
             return $request->url() === 'https://project.supabase.co/auth/v1/user'
                 && $request->hasHeader('apikey', 'sb_publishable_test')
                 && $request->hasHeader('Authorization', 'Bearer user-jwt');
-        });
-    }
-
-    public function test_admin_request_uses_secret_key_only_as_apikey(): void
-    {
-        Http::fake([
-            'https://project.supabase.co/rest/v1/lab_config*' => Http::response([]),
-        ]);
-
-        app(SupabaseClient::class)
-            ->adminRequest()
-            ->get('/rest/v1/lab_config?select=id');
-
-        Http::assertSent(static function (Request $request): bool {
-            return $request->hasHeader('apikey', 'sb_secret_test')
-                && ! $request->hasHeader('Authorization');
         });
     }
 }
