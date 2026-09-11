@@ -54,4 +54,13 @@ class LocalhostHarnessTest extends TestCase
         $this->assertStringContainsString('401', $script);
         $this->assertStringContainsString('BearerToken', $script);
     }
+
+    public function test_ci_validates_localhost_powershell_syntax(): void
+    {
+        $workflow = (string) file_get_contents(base_path('.github/workflows/ci.yml'));
+
+        $this->assertStringContainsString('Validate localhost PowerShell syntax', $workflow);
+        $this->assertStringContainsString('local/start.ps1', $workflow);
+        $this->assertStringContainsString('local/smoke.ps1', $workflow);
+    }
 }
