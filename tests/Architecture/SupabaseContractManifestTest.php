@@ -2,6 +2,7 @@
 
 namespace Tests\Architecture;
 
+use App\Services\Supabase\SupabaseClient;
 use Tests\TestCase;
 
 class SupabaseContractManifestTest extends TestCase
@@ -27,5 +28,15 @@ class SupabaseContractManifestTest extends TestCase
         ], $manifest['contracts'] ?? null);
         $this->assertArrayNotHasKey('database', $manifest);
         $this->assertArrayNotHasKey('tenant_database', $manifest);
+    }
+
+    public function test_foundation_has_no_unused_supabase_admin_credential_surface(): void
+    {
+        $services = (string) file_get_contents(config_path('services.php'));
+        $environment = (string) file_get_contents(base_path('.env.example'));
+
+        $this->assertFalse(method_exists(SupabaseClient::class, 'adminRequest'));
+        $this->assertStringNotContainsString('secret_key', $services);
+        $this->assertStringNotContainsString('SUPABASE_SECRET_KEY', $environment);
     }
 }
