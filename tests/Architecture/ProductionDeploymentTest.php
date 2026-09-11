@@ -29,6 +29,16 @@ class ProductionDeploymentTest extends TestCase
         $this->assertStringNotContainsString('SUPABASE_SECRET_KEY', $script);
     }
 
+    public function test_production_deploy_checks_runtime_tools_and_write_permissions(): void
+    {
+        $script = (string) file_get_contents(base_path('deploy/deploy.sh'));
+
+        $this->assertStringContainsString('command -v curl', $script);
+        $this->assertStringContainsString('storage', $script);
+        $this->assertStringContainsString('bootstrap/cache', $script);
+        $this->assertStringContainsString('-w', $script);
+    }
+
     public function test_production_smoke_checks_cover_liveness_and_supabase_auth(): void
     {
         $path = base_path('deploy/smoke.sh');

@@ -11,6 +11,18 @@ if ! command -v composer >/dev/null 2>&1; then
     exit 1
 fi
 
+if ! command -v curl >/dev/null 2>&1; then
+    echo "cURL não encontrado." >&2
+    exit 1
+fi
+
+for path in storage bootstrap/cache; do
+    if [[ ! -d "$path" || ! -w "$path" ]]; then
+        echo "$path precisa existir e ter permissão de escrita." >&2
+        exit 1
+    fi
+done
+
 php -r 'if (version_compare(PHP_VERSION, "8.3.0", "<")) { fwrite(STDERR, "PHP >= 8.3 é obrigatório.\n"); exit(1); }'
 
 composer install --no-dev --no-interaction --prefer-dist --no-progress --optimize-autoloader
