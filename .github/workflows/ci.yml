@@ -25,6 +25,24 @@ jobs:
           composer validate --strict
       - name: Validate deployment shell syntax
         run: bash -n deploy/deploy.sh deploy/smoke.sh
+      - name: Validate localhost PowerShell syntax
+        shell: pwsh
+        run: |
+          $errors = @()
+          foreach ($path in @('local/start.ps1', 'local/smoke.ps1')) {
+            $tokens = $null
+            $parseErrors = $null
+            [System.Management.Automation.Language.Parser]::ParseFile(
+              (Resolve-Path $path).Path,
+              [ref] $tokens,
+              [ref] $parseErrors
+            ) | Out-Null
+            $errors += $parseErrors
+          }
+          if ($errors.Count -gt 0) {
+            $errors | ForEach-Object { Write-Error $_ }
+            exit 1
+          }
       - name: Install PHP dependencies
         run: composer install --no-interaction --prefer-dist --no-progress
       - name: Check formatting
