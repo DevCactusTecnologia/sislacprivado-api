@@ -13,13 +13,10 @@ final class SupabaseClient
 
     private readonly string $publishableKey;
 
-    private readonly string $secretKey;
-
     public function __construct()
     {
         $this->url = rtrim((string) config('services.supabase.url'), '/');
         $this->publishableKey = (string) config('services.supabase.publishable_key');
-        $this->secretKey = (string) config('services.supabase.secret_key');
     }
 
     /**
@@ -49,11 +46,6 @@ final class SupabaseClient
         }
 
         return $this->request($this->publishableKey)->withToken($jwt);
-    }
-
-    public function adminRequest(): PendingRequest
-    {
-        return $this->request($this->secretKey);
     }
 
     private function request(string $apiKey): PendingRequest
