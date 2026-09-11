@@ -35,14 +35,35 @@ if ((string) config("app.key") === "") {
     exit(1);
 }
 
+function isHttpsUrl(string $url): bool
+{
+    if ($url === "" || filter_var($url, FILTER_VALIDATE_URL) === false) {
+        return false;
+    }
+
+    $parts = parse_url($url);
+
+    return is_array($parts)
+        && ($parts["scheme"] ?? null) === "https"
+        && isset($parts["host"])
+        && $parts["host"] !== "";
+}
+
 $appUrl = (string) config("app.url");
-if ($appUrl === "" || ! str_starts_with($appUrl, "https://")) {
-    fwrite(STDERR, "APP_URL deve usar https://.\n");
+if (! isHttpsUrl($appUrl)) {
+    fwrite(STDERR, "APP_URL deve ser uma URL HTTPS válida.\n");
     exit(1);
 }
 
-if ((string) config("services.supabase.url") === "" || (string) config("services.supabase.publishable_key") === "") {
-    fwrite(STDERR, "SUPABASE_URL e SUPABASE_PUBLISHABLE_KEY são obrigatórios.\n");
+$supabaseUrl = (string) config("services.supabase.url");
+if (! isHttpsUrl($supabaseUrl)) {
+    fwrite(STDERR, "SUPABASE_URL deve ser uma URL HTTPS válida.\n");
+    exit(1);
+}
+
+$publishableKey = (string) config("services.supabase.publishable_key");
+if (! str_starts_with($publishableKey, "sb_publishable_")) {
+    fwrite(STDERR, "SUPABASE_PUBLISHABLE_KEY deve usar a chave publishable moderna.\n");
     exit(1);
 }
 '
